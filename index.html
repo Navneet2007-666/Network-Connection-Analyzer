@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Network Connection Analyzer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header><div class="logo"><i>◈</i>Network Connection Analyzer</div>
+<nav id="nav"><button data-v="dash" class="on">Dashboard</button><button data-v="ana">Analysis</button><button data-v="abt">About</button></nav>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn" id="theme">Theme</button><button class="btn" id="save">Save</button><button class="btn dg" id="reset">Reset</button></div></header>
+<main>
+<section class="view on" id="dash">
+<div class="stats" id="stats"></div>
+<div class="grid"><div class="card"><div class="tools">
+<button class="btn" id="undo">Undo</button><button class="btn" id="redo">Redo</button>
+<button class="btn" id="conn">Connect mode: off</button><button class="btn dg" id="del">Delete selected</button>
+<button class="btn" id="fit">Fit</button><button class="btn" id="zi">+</button><button class="btn" id="zo">−</button></div>
+<svg id="cv" viewBox="0 0 900 560"></svg><div class="mu" id="hint" style="margin-top:6px"></div></div>
+<aside style="display:grid;gap:14px;align-content:start">
+<div class="card"><h3 id="ftitle">Add device</h3>
+<label>Name</label><input id="fn" maxlength="24" placeholder="e.g. Core-Router">
+<label>Type</label><select id="ft"></select>
+<label>IP address</label><input id="fi" placeholder="192.168.1.10">
+<label>Description (optional)</label><textarea id="fd" rows="2"></textarea>
+<div class="mu bad" id="ferr" style="min-height:18px"></div>
+<div class="row"><button class="btn pri" id="fsub">Add device</button><button class="btn" id="fcancel">Clear</button></div></div>
+<div class="card"><h3>Devices</h3><input id="q" placeholder="Search name or IP"><select id="ff" style="margin-top:6px"></select><div class="list" id="dl"></div></div>
+<div class="card"><h3>Sample networks and files</h3><div class="row" id="pre"></div>
+<div class="row"><button class="btn" id="exp">Export JSON</button><button class="btn" id="imp">Import JSON</button></div><input type="file" id="file" accept=".json" hidden></div>
+</aside></div></section>
+
+<section class="view" id="ana"><div class="cols">
+<div class="card"><h3>Reachability (DFS)</h3><label>Source</label><select id="rs"></select><label>Destination</label><select id="rd"></select>
+<div class="row"><button class="btn pri" id="rgo">Find path</button><button class="btn" id="rclr">Clear highlight</button></div><div id="rout" style="margin-top:10px"></div></div>
+<div class="card"><h3>Connectivity</h3><div id="cout"></div><div class="row"><button class="btn pri" id="cgo">Color components</button></div></div>
+<div class="card"><h3>Step-by-step DFS</h3><label>Start device</label><select id="ss"></select>
+<div class="row"><button class="btn pri" id="sgo">Start</button><button class="btn" id="sprev">Prev</button><button class="btn" id="splay">Play</button><button class="btn" id="snext">Next</button><button class="btn" id="sreset">Reset</button></div>
+<div id="sout" style="margin-top:10px" class="mu">Pick a start device and press Start.</div></div></div>
+<div class="card" style="margin-top:14px"><h3>Topology view</h3><div class="mu">Highlights from the analysis appear on the canvas below.</div><svg id="cv2" viewBox="0 0 900 560" style="width:100%;height:420px;margin-top:8px;border-radius:12px;background:var(--cv);border:1px solid var(--bd)"></svg></div></section>
+
+<section class="view" id="abt"><div class="cols">
+<div class="card"><h3>Graph</h3><p>A network is a graph G = (V, E). V is the set of devices and E is the set of connections between them.</p>
+<h3>Adjacency list</h3><p>Each device stores the list of devices it is directly linked to. Memory use is O(V + E).</p>
+<pre id="adjx"></pre></div>
+<div class="card"><h3>Depth-First Search</h3><p>DFS visits a device, then goes as deep as possible along each unvisited neighbor before backing up.</p>
+<pre>DFS(graph, start):
+  stack ← [start]; visited ← {}
+  while stack not empty:
+    u ← stack.pop()
+    if u in visited: continue
+    visit(u)
+    for v in graph[u] (reverse order):
+      if v not in visited: stack.push(v)</pre>
+<p>Example: with A–B, A–C, B–D, DFS from A visits A, B, D, C.</p>
+<h3>Connected components</h3><p>A component is a group where every device can reach every other. Run DFS from each unvisited device; each run finds one component. An isolated device is a component of one.</p></div></div></section>
+</main>
+<div id="toast"></div><div id="modal"><div class="card"><h3>Clear the whole network?</h3><p class="mu">This removes every device and connection. You can still undo.</p><div class="row"><button class="btn" id="mno">Cancel</button><button class="btn dg" id="myes">Clear network</button></div></div></div>
+<script src="script.js"></script>
+</body></html>
